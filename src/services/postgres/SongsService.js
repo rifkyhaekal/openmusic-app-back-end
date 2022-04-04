@@ -9,7 +9,7 @@ const {
   mapSongsDBToSongModel,
 } = require('../../utils');
 
-class SongService {
+class SongsService {
   constructor() {
     this._pool = new Pool();
   }
@@ -108,4 +108,4 @@ class SongService {
   }
 }
 
-module.exports = SongService;
+module.exports = SongsService;

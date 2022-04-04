@@ -2,9 +2,8 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { mapSongsDBTOSongsModel } = require('../../utils');
 
-class AlbumService {
+class AlbumsService {
   constructor() {
     this._pool = new Pool();
   }
@@ -39,7 +38,7 @@ class AlbumService {
     }
 
     const songsQuery = {
-      text: 'SELECT * FROM songs WHERE album_id = $1',
+      text: 'SELECT id, title, performer FROM songs WHERE album_id = $1',
       values: [id],
     };
 
@@ -50,7 +49,7 @@ class AlbumService {
       return albumResult.rows[0];
     }
 
-    albumResult.rows[0].songs = songsResult.rows.map(mapSongsDBTOSongsModel);
+    albumResult.rows[0].songs = songsResult.rows;
 
     return albumResult.rows[0];
   }
@@ -82,4 +81,4 @@ class AlbumService {
   }
 }
 
-module.exports = AlbumService;
+module.exports = AlbumsService;

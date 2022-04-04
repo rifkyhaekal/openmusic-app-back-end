@@ -1,20 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
 
-const mapSongsDBTOSongsModel = ({
-  id,
-  title,
-  year,
-  performer,
-  genre,
-  duration,
-  albumId,
-}) => ({
-  id,
-  title,
-  performer,
-});
-
 const mapSongsDBToSongModel = ({
   id,
   title,
@@ -44,7 +30,6 @@ const getSongByTitleAndPerformer = (songs, title, performer) =>
   songs.performer.toLowerCase().includes(performer);
 
 module.exports = {
-  mapSongsDBTOSongsModel,
   mapSongsDBToSongModel,
   getSongByTitle,
   getSongByPerformer,
