@@ -8,7 +8,6 @@ class UserHandler {
     this._internServerErrMsg = 'Maaf, terjadi kegagalan pada server kami';
 
     this.postUserHandler = this.postUserHandler.bind(this);
-    this.getUserByIdHandler = this.getUserByIdHandler.bind(this);
   }
 
   async postUserHandler({ payload }, h) {
@@ -24,35 +23,12 @@ class UserHandler {
 
       const response = h.response({
         status: 'success',
-        message: 'User berhasil ditambahkan',
         data: {
           userId,
         },
       });
       response.code(201);
       return response;
-    } catch (error) {
-      if (error instanceof ClientError) {
-        throw error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
-  }
-
-  async getUserByIdHandler({ params }) {
-    try {
-      const { id } = params;
-
-      const user = await this._service.getUserById(id);
-
-      return {
-        status: 'success',
-        data: {
-          user,
-        },
-      };
     } catch (error) {
       if (error instanceof ClientError) {
         throw error;
