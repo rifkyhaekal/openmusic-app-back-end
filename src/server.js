@@ -17,13 +17,32 @@ const SongValidator = require('./validator/songs');
 // users
 const users = require('./api/users');
 const UsersService = require('./services/postgres/UsersService');
-const UsersValidator = require('./validator/users');
+const UserValidator = require('./validator/users');
 
 // authentications
 const authentications = require('./api/authentications');
 const AuthenticationsService = require('./services/postgres/AuthenticationsService');
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
+
+// playlist
+const playlists = require('./api/playlists');
+const PlaylistsService = require('./services/postgres/PlaylistsService');
+const PlaylistValidator = require('./validator/playlists');
+
+// playlist song
+const playlistSongs = require('./api/playlistSongs');
+const PlaylistSongsService = require('./services/postgres/PlaylistSongsService');
+const PlaylistSongsValidator = require('./validator/playlistSongs');
+
+// collaborations
+const collaborations = require('./api/collaborations');
+const CollaborationService = require('./services/postgres/CollaborationsService');
+const CollaborationsValidator = require('./validator/collaborations');
+
+// playlist song activities
+const playlistSongActivities = require('./api/playlistSongActivities');
+const PlaylistSongActivitiesService = require('./services/postgres/PlaylistSongActivitiesService');
 
 // exceptions
 const ClientError = require('./exceptions/ClientError');
@@ -34,6 +53,10 @@ const init = async () => {
   const albumsService = new AlbumsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const collaborationsService = new CollaborationService();
+  const playlistsService = new PlaylistsService(collaborationsService);
+  const playlistSongsService = new PlaylistSongsService();
+  const playlistSongActivitiesService = new PlaylistSongActivitiesService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -88,7 +111,7 @@ const init = async () => {
       plugin: users,
       options: {
         service: usersService,
-        validator: UsersValidator,
+        validator: UserValidator,
       },
     },
     {
@@ -100,10 +123,44 @@ const init = async () => {
         validator: AuthenticationsValidator,
       },
     },
+    {
+      plugin: playlists,
+      options: {
+        service: playlistsService,
+        validator: PlaylistValidator,
+      },
+    },
+    {
+      plugin: playlistSongs,
+      option: {
+        songsService,
+        playlistsService,
+        playlistSongsService,
+        playlistSongActivitiesService,
+        validator: PlaylistSongsValidator,
+      },
+    },
+    {
+      plugin: collaborations,
+      options: {
+        collaborationsService,
+        playlistsService,
+        usersService,
+        validator: CollaborationsValidator,
+      },
+    },
+    {
+      plugin: playlistSongActivities,
+      options: {
+        playlistsService,
+        playlistSongActivitiesService,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
+
     if (response instanceof ClientError) {
       const newResponse = h.response({
         status: 'fail',

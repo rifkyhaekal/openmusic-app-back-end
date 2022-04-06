@@ -17,7 +17,7 @@ class PlaylistsHandler {
       this._validator.validatePlaylistPayload(payload);
 
       const { name } = payload;
-      const { userId: ownerId } = auth.credentials;
+      const { id: ownerId } = auth.credentials;
 
       const playlistId = await this._service.addPlaylist(ownerId, name);
 
@@ -41,7 +41,7 @@ class PlaylistsHandler {
 
   async getPlaylistsHandler({ auth }) {
     try {
-      const { userId: ownerId } = auth.credentials;
+      const { id: ownerId } = auth.credentials;
 
       const playlists = await this._service.getPlaylists(ownerId);
 
@@ -63,11 +63,11 @@ class PlaylistsHandler {
 
   async deletePlaylistByIdHandler({ params, auth }) {
     try {
-      const { id } = params;
-      const { userId: ownerId } = auth.credentials;
+      const { id: playlistId } = params;
+      const { id: ownerId } = auth.credentials;
 
-      await this._service.verifyPlaylistOwner(id, ownerId);
-      await this._service.deletePlaylistById(id);
+      await this._service.verifyPlaylistOwner(playlistId, ownerId);
+      await this._service.deletePlaylistById(playlistId);
 
       return {
         status: 'success',

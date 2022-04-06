@@ -7,6 +7,7 @@ class AuthenticationsHandler {
     this._usersService = usersService;
     this._tokenManager = tokenManager;
     this._validator = validator;
+    this._internServerErrMsg = 'Maaf, terjadi kegagalan pada server kami';
 
     this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
     this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
@@ -54,7 +55,7 @@ class AuthenticationsHandler {
 
       const { refreshToken } = payload;
       await this._authenticationsService.verifyRefreshToken(refreshToken);
-      const { id } = this._tokenManager.verifyRefreshToken;
+      const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
 
       const accessToken = this._tokenManager.generateAccessToken({ id });
       return {

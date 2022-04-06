@@ -80,7 +80,9 @@ class PlaylistService {
       try {
         await this._collaborationService.verifyCollaborator(playlistId, userId);
       } catch {
-        throw error;
+        throw new AuthorizationError(
+          'Anda tidak berhak mengakses resource ini'
+        );
       }
     }
   }

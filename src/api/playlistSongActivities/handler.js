@@ -8,7 +8,7 @@ class PlaylistSongActivitiesHandler {
 
   async getActivityByIdHandler({ params, auth }) {
     try {
-      const { userId } = auth.credentials;
+      const { id: userId } = auth.credentials;
       const { id: playlistId } = params;
 
       await this._playlistService.verifyPlaylistAccess(playlistId, userId);

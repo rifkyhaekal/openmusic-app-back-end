@@ -13,13 +13,8 @@ class UserHandler {
   async postUserHandler({ payload }, h) {
     try {
       this._validator.validateUserPayload(payload);
-      const { username, password, fullname } = payload;
 
-      const userId = await this._service.addUser({
-        username,
-        password,
-        fullname,
-      });
+      const userId = await this._service.addUser(payload);
 
       const response = h.response({
         status: 'success',
