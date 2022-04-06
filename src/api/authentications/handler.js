@@ -37,7 +37,9 @@ class AuthenticationsHandler {
           refreshToken,
         },
       });
+
       response.code(201);
+      console.log(response);
       return response;
     } catch (error) {
       if (error instanceof ClientError) {
