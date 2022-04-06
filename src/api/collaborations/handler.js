@@ -1,6 +1,3 @@
-const ClientError = require('../../exceptions/ClientError');
-const InternalServerError = require('../../exceptions/InternalServerError');
-
 class CollaborationsHandler {
   constructor(
     collaborationsService,
@@ -13,69 +10,50 @@ class CollaborationsHandler {
     this._usersService = usersService;
     this._validator = validator;
     this._internServerErrMsg = 'Maaf, terjadi kegagalan pada server kami';
+
     this.postCollaborationsHandler = this.postCollaborationsHandler.bind(this);
     this.deleteCollaborationsHandler =
       this.deleteCollaborationsHandler.bind(this);
   }
 
   async postCollaborationsHandler({ payload, auth }, h) {
-    try {
-      this._validator.validateCollaborationsPayload(payload);
+    this._validator.validateCollaborationsPayload(payload);
 
-      const { playlistId, userId } = payload;
-      const { id: credentialId } = auth.credentials;
+    const { playlistId, userId } = payload;
+    const { id: credentialId } = auth.credentials;
 
-      await this._playlistsService.verifyPlaylistOwner(
-        playlistId,
-        credentialId
-      );
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
 
-      await this._usersService.getUserById(userId);
+    await this._usersService.getUserById(userId);
 
-      const id = await this._collaborationsService.addCollaboration(
-        playlistId,
-        userId
-      );
+    const id = await this._collaborationsService.addCollaboration(
+      playlistId,
+      userId
+    );
 
-      const response = h.response({
-        status: 'success',
-        data: {
-          collaborationId: id,
-        },
-      });
-      response.code(201);
-      return response;
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    const response = h.response({
+      status: 'success',
+      data: {
+        collaborationId: id,
+      },
+    });
+    response.code(201);
+    return response;
   }
 
   async deleteCollaborationsHandler({ payload, auth }) {
-    try {
-      this._validator.validateCollaborationsPayload(payload);
+    this._validator.validateCollaborationsPayload(payload);
 
-      const { playlistId, userId } = payload;
-      const { id: credentialId } = auth.credentials;
-      await this._playlistsService.verifyPlaylistOwner(
-        playlistId,
-        credentialId
-      );
+    const { playlistId, userId } = payload;
+    const { id: credentialId } = auth.credentials;
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
 
-      await this._collaborationsService.deleteCollaboration(playlistId, userId);
+    await this._collaborationsService.deleteCollaboration(playlistId, userId);
 
-      return {
-        status: 'success',
-        message: 'Kolaborasi berhasil dihapus',
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    return {
+      status: 'success',
+      message: 'Kolaborasi berhasil dihapus',
+    };
   }
 }
 

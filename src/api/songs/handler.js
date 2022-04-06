@@ -1,6 +1,3 @@
-const ClientError = require('../../exceptions/ClientError');
-const InternalServerError = require('../../exceptions/InternalServerError');
-
 class SongsHandler {
   constructor(service, validator) {
     this._service = service;
@@ -15,111 +12,66 @@ class SongsHandler {
   }
 
   async postSongHandler({ payload }, h) {
-    try {
-      this._validator.validateSongPayload(payload);
+    this._validator.validateSongPayload(payload);
 
-      const songId = await this._service.addSong(payload);
+    const songId = await this._service.addSong(payload);
 
-      const response = h.response({
-        status: 'success',
-        data: {
-          songId,
-        },
-      });
-      response.code(201);
-      return response;
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    const response = h.response({
+      status: 'success',
+      data: {
+        songId,
+      },
+    });
+    response.code(201);
+    return response;
   }
 
   async getSongsHandler({ query }) {
-    try {
-      const params = query;
-      const songs = await this._service.getSongs(params);
+    const params = query;
+    const songs = await this._service.getSongs(params);
 
-      return {
-        status: 'success',
-        data: {
-          songs,
-        },
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    return {
+      status: 'success',
+      data: {
+        songs,
+      },
+    };
   }
 
   async getSongByIdHandler({ params }) {
-    try {
-      const { id } = params;
-      const song = await this._service.getSongById(id);
+    const { id } = params;
+    const song = await this._service.getSongById(id);
 
-      return {
-        status: 'success',
-        data: {
-          song,
-        },
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    return {
+      status: 'success',
+      data: {
+        song,
+      },
+    };
   }
 
   async putSongByIdHandler({ payload, params }) {
-    try {
-      this._validator.validateSongPayload(payload);
+    this._validator.validateSongPayload(payload);
 
-      const { id } = params;
+    const { id } = params;
 
-      await this._service.editSongById(id, payload);
+    await this._service.editSongById(id, payload);
 
-      return {
-        status: 'success',
-        message: 'Lagu berhasil diperbarui',
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._InternServerErrMsg);
-    }
+    return {
+      status: 'success',
+      message: 'Lagu berhasil diperbarui',
+    };
   }
 
   async deleteSongByIdHandler({ params }) {
-    try {
-      const { id } = params;
+    const { id } = params;
 
-      await this._service.deleteSongById(id);
+    await this._service.deleteSongById(id);
 
-      return {
-        status: 'success',
-        message: 'Lagu berhasil dihapus',
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._InternServerErrMsg);
-    }
+    return {
+      status: 'success',
+      message: 'Lagu berhasil dihapus',
+    };
   }
 }
 

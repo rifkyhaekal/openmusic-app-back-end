@@ -7,26 +7,22 @@ class PlaylistSongActivitiesHandler {
   }
 
   async getActivityByIdHandler({ params, auth }) {
-    try {
-      const { id: userId } = auth.credentials;
-      const { id: playlistId } = params;
+    const { id: userId } = auth.credentials;
+    const { id: playlistId } = params;
 
-      await this._playlistService.verifyPlaylistAccess(playlistId, userId);
+    await this._playlistService.verifyPlaylistAccess(playlistId, userId);
 
-      const activities = await this._activityService.getActivityByPlaylistId(
-        playlistId
-      );
+    const activities = await this._activityService.getActivityByPlaylistId(
+      playlistId
+    );
 
-      return {
-        status: 'success',
-        data: {
-          playlistId,
-          activities,
-        },
-      };
-    } catch (error) {
-      return error;
-    }
+    return {
+      status: 'success',
+      data: {
+        playlistId,
+        activities,
+      },
+    };
   }
 }
 

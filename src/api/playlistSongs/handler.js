@@ -1,6 +1,3 @@
-const ClientError = require('../../exceptions/ClientError');
-const InternalServerError = require('../../exceptions/InternalServerError');
-
 class PlaylistSongHandler {
   constructor(
     songsService,
@@ -23,91 +20,68 @@ class PlaylistSongHandler {
   }
 
   async postPlaylistSongHandler({ payload, params, auth }, h) {
-    try {
-      const { id: userId } = auth.credentials;
-      const { id: playlistId } = params;
-      const { songId } = payload;
+    const { id: userId } = auth.credentials;
+    const { id: playlistId } = params;
+    const { songId } = payload;
 
-      this._validator.validatePlaylistSongPayload(payload);
+    this._validator.validatePlaylistSongPayload(payload);
 
-      await this._songsService.verifySongId(songId);
-      await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
+    await this._songsService.verifySongId(songId);
+    await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
 
-      await this._playlistSongsService.addPlaylistSong(playlistId, songId);
-      await this._playlistSongActivitiesService.addPlaylistSongActivities(
-        playlistId,
-        songId,
-        userId,
-        'add'
-      );
+    await this._playlistSongsService.addPlaylistSong(playlistId, songId);
+    await this._playlistSongActivitiesService.addPlaylistSongActivities(
+      playlistId,
+      songId,
+      userId,
+      'add'
+    );
 
-      const response = h.response({
-        status: 'success',
-        message: 'Berhasil menambahkan lagu ke playlist',
-      });
-      response.code(201);
-      return response;
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    const response = h.response({
+      status: 'success',
+      message: 'Berhasil menambahkan lagu ke playlist',
+    });
+    response.code(201);
+    return response;
   }
 
   async getPlaylistSongsHandler({ params, auth }) {
-    try {
-      const { id: userId } = auth.credentials;
-      const { id: playlistId } = params;
+    const { id: userId } = auth.credentials;
+    const { id: playlistId } = params;
 
-      await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
-      const playlist = await this._playlistSongsService.getPlaylistSongs(
-        playlistId
-      );
+    await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
+    const playlist = await this._playlistSongsService.getPlaylistSongs(
+      playlistId
+    );
 
-      return {
-        status: 'success',
-        data: {
-          playlist,
-        },
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    return {
+      status: 'success',
+      data: {
+        playlist,
+      },
+    };
   }
 
   async deletePlaylistSongByIdHandler({ payload, params, auth }) {
-    try {
-      const { id: userId } = auth.credentials;
-      const { id: playlistId } = params;
-      const { songId } = payload;
+    const { id: userId } = auth.credentials;
+    const { id: playlistId } = params;
+    const { songId } = payload;
 
-      this._validator.validatePlaylistSongPayload(payload);
-      await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
+    this._validator.validatePlaylistSongPayload(payload);
+    await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
 
-      await this._playlistSongsService.deletePlaylistSongById(songId);
-      await this._playlistSongActivitiesService.addPlaylistSongActivities(
-        playlistId,
-        songId,
-        userId,
-        'delete'
-      );
+    await this._playlistSongsService.deletePlaylistSongById(songId);
+    await this._playlistSongActivitiesService.addPlaylistSongActivities(
+      playlistId,
+      songId,
+      userId,
+      'delete'
+    );
 
-      return {
-        status: 'success',
-        message: 'Lagu berhasil dihapus dari playlist',
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    return {
+      status: 'success',
+      message: 'Lagu berhasil dihapus dari playlist',
+    };
   }
 }
 

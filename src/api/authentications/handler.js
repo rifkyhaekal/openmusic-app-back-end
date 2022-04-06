@@ -1,6 +1,3 @@
-const ClientError = require('../../exceptions/ClientError');
-const InternalServerError = require('../../exceptions/InternalServerError');
-
 class AuthenticationsHandler {
   constructor(authenticationsService, usersService, tokenManager, validator) {
     this._authenticationsService = authenticationsService;
@@ -16,86 +13,59 @@ class AuthenticationsHandler {
   }
 
   async postAuthenticationHandler({ payload }, h) {
-    try {
-      this._validator.validatePostAuthenticationPayload(payload);
+    this._validator.validatePostAuthenticationPayload(payload);
 
-      const { username, password } = payload;
-      const id = await this._usersService.verifyUserCredential(
-        username,
-        password
-      );
+    const { username, password } = payload;
+    const id = await this._usersService.verifyUserCredential(
+      username,
+      password
+    );
 
-      const accessToken = this._tokenManager.generateAccessToken({ id });
-      const refreshToken = this._tokenManager.generateRefreshToken({ id });
+    const accessToken = this._tokenManager.generateAccessToken({ id });
+    const refreshToken = this._tokenManager.generateRefreshToken({ id });
 
-      await this._authenticationsService.addRefreshToken(refreshToken);
+    await this._authenticationsService.addRefreshToken(refreshToken);
 
-      const response = h.response({
-        status: 'success',
-        data: {
-          accessToken,
-          refreshToken,
-        },
-      });
+    const response = h.response({
+      status: 'success',
+      data: {
+        accessToken,
+        refreshToken,
+      },
+    });
 
-      response.code(201);
-      console.log(response);
-      return response;
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    response.code(201);
+    console.log(response);
+    return response;
   }
 
   async putAuthenticationHandler({ payload }) {
-    try {
-      this._validator.validatePutAuthenticationPayload(payload);
+    this._validator.validatePutAuthenticationPayload(payload);
 
-      const { refreshToken } = payload;
-      await this._authenticationsService.verifyRefreshToken(refreshToken);
-      const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
+    const { refreshToken } = payload;
+    await this._authenticationsService.verifyRefreshToken(refreshToken);
+    const { id } = this._tokenManager.verifyRefreshToken(refreshToken);
 
-      const accessToken = this._tokenManager.generateAccessToken({ id });
-      return {
-        status: 'success',
-        data: {
-          accessToken,
-        },
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    const accessToken = this._tokenManager.generateAccessToken({ id });
+    return {
+      status: 'success',
+      data: {
+        accessToken,
+      },
+    };
   }
 
   async deleteAuthenticationHandler({ payload }) {
-    try {
-      this._validator.validateDeleteAuthenticationPayload(payload);
+    this._validator.validateDeleteAuthenticationPayload(payload);
 
-      const { refreshToken } = payload;
-      await this._authenticationsService.verifyRefreshToken(refreshToken);
-      await this._authenticationsService.deleteRefreshToken(refreshToken);
+    const { refreshToken } = payload;
+    await this._authenticationsService.verifyRefreshToken(refreshToken);
+    await this._authenticationsService.deleteRefreshToken(refreshToken);
 
-      return {
-        status: 'success',
-        message: 'Refresh token berhasil dihapus',
-      };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return error;
-      }
-
-      console.error(error);
-      return new InternalServerError(this._internServerErrMsg);
-    }
+    return {
+      status: 'success',
+      message: 'Refresh token berhasil dihapus',
+    };
   }
 }
 
