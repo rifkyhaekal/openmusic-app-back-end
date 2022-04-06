@@ -35,7 +35,6 @@ class AuthenticationsHandler {
     });
 
     response.code(201);
-    console.log(response);
     return response;
   }
 
