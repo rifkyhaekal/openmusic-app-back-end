@@ -176,11 +176,10 @@ const init = async () => {
         message: response.message,
       });
       newResponse.code(response.statusCode);
-      console.error(response);
+
       return newResponse;
     }
 
-    console.error(response.message);
     return response.continue || response;
   });
 

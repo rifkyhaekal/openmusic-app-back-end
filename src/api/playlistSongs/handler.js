@@ -14,7 +14,8 @@ class PlaylistSongHandler {
     this._internServerErrMsg = 'Maaf, terjadi kegagalan pada server kami';
 
     this.postPlaylistSongHandler = this.postPlaylistSongHandler.bind(this);
-    this.getPlaylistSongsHandler = this.getPlaylistSongsHandler.bind(this);
+    this.getPlaylistSongsByIdHandler =
+      this.getPlaylistSongsByIdHandler.bind(this);
     this.deletePlaylistSongByIdHandler =
       this.deletePlaylistSongByIdHandler.bind(this);
   }
@@ -45,12 +46,12 @@ class PlaylistSongHandler {
     return response;
   }
 
-  async getPlaylistSongsHandler({ params, auth }) {
+  async getPlaylistSongsByIdHandler({ params, auth }) {
     const { id: userId } = auth.credentials;
     const { id: playlistId } = params;
 
     await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
-    const playlist = await this._playlistSongsService.getPlaylistSongs(
+    const playlist = await this._playlistSongsService.getPlaylistSongsById(
       playlistId
     );
 

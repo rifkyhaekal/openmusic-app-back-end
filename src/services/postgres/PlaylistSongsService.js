@@ -23,7 +23,7 @@ class PlaylistSongsServices {
     }
   }
 
-  async getPlaylistSongs(playlistId) {
+  async getPlaylistSongsById(playlistId) {
     const playlistQuery = {
       text: 'SELECT DISTINCT ON (playlists.id) playlists.id, playlists.name, users.username FROM playlist_songs LEFT JOIN playlists ON playlists.id = playlist_id LEFT JOIN users ON users.id = playlists.owner WHERE playlists.id = $1',
       values: [playlistId],
