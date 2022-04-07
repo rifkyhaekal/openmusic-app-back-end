@@ -52,7 +52,7 @@ class PlaylistService {
 
   async verifyPlaylistOwner(id, owner) {
     const query = {
-      text: 'SELECT * FROM playlist WHERE id = $1',
+      text: 'SELECT * FROM playlists WHERE id = $1',
       values: [id],
     };
 
@@ -73,8 +73,8 @@ class PlaylistService {
     try {
       await this.verifyPlaylistOwner(playlistId, userId);
     } catch (error) {
-      if (error instanceof NotFoundError) {
-        throw error;
+      if (error.statusCode === 404) {
+        throw new NotFoundError('Playlist tidak ditemukan');
       }
 
       try {

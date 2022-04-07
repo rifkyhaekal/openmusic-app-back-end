@@ -21,11 +21,11 @@ class PlaylistSongHandler {
   }
 
   async postPlaylistSongHandler({ payload, params, auth }, h) {
+    this._validator.validatePlaylistSongPayload(payload);
+
     const { id: userId } = auth.credentials;
     const { id: playlistId } = params;
     const { songId } = payload;
-
-    this._validator.validatePlaylistSongPayload(payload);
 
     await this._songsService.verifySongId(songId);
     await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
