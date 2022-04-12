@@ -2,7 +2,6 @@ class UserHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
-    this._internServerErrMsg = 'Maaf, terjadi kegagalan pada server kami';
 
     this.postUserHandler = this.postUserHandler.bind(this);
   }

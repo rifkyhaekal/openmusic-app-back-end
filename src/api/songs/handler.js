@@ -2,7 +2,6 @@ class SongsHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
-    this._internServerErrMsg = 'Maaf, terjadi kegagalan pada server kami';
 
     this.postSongHandler = this.postSongHandler.bind(this);
     this.getSongsHandler = this.getSongsHandler.bind(this);
