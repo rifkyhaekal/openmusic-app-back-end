@@ -11,7 +11,6 @@ class PlaylistSongHandler {
     this._playlistSongsService = playlistSongsService;
     this._playlistSongActivitiesService = playlistSongActivitiesService;
     this._validator = validator;
-    this._internServerErrMsg = 'Maaf, terjadi kegagalan pada server kami';
 
     this.postPlaylistSongHandler = this.postPlaylistSongHandler.bind(this);
     this.getPlaylistSongsByIdHandler =
@@ -27,8 +26,8 @@ class PlaylistSongHandler {
     const { id: playlistId } = params;
     const { songId } = payload;
 
-    await this._songsService.verifySongId(songId);
     await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
+    await this._songsService.verifySongId(songId);
 
     await this._playlistSongsService.addPlaylistSong(playlistId, songId);
     await this._playlistSongActivitiesService.addPlaylistSongActivities(

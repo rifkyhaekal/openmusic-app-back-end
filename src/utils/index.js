@@ -19,6 +19,13 @@ const mapSongsDBToSongModel = ({
   albumId: album_id,
 });
 
+const mapAlbumsDBToAlbumOnlyModel = ({ id, name, year, cover_url }) => ({
+  id,
+  name,
+  year,
+  coverUrl: cover_url,
+});
+
 const getSongByTitle = (songs, title) =>
   songs.title.toLowerCase().includes(title);
 
@@ -31,6 +38,7 @@ const getSongByTitleAndPerformer = (songs, title, performer) =>
 
 module.exports = {
   mapSongsDBToSongModel,
+  mapAlbumsDBToAlbumOnlyModel,
   getSongByTitle,
   getSongByPerformer,
   getSongByTitleAndPerformer,
